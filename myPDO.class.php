@@ -62,7 +62,7 @@
 
 	}
 
-	myPDO::setOptionsDataBase('mysql: host=sqletud.univ-mlv.fr;dbname=jbastide_db;charset=UTF8','jbastide','yeo8aeWd');
+	myPDO::setOptionsDataBase('mysql:host=sqletud.univ-mlv.fr;dbname=jbastide_db;charset=UTF8','jbastide','yeo8aeWd');
 
 	// requet a faire comme cela
 	// myPDO::getSingletonPDO()->query("SELECT * FROM appartement");
