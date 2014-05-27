@@ -21,6 +21,7 @@
 				//mise en place du mode exception pour les erreurs de type PDO
 				$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 				$this->pdo->query("SET NAMES UTF8");
+				//$this->pdo->query("SET lc_time_names = 'fr FR'");
 			}
 			catch(Exception $e){
 				die("Connexion à la base de données impossible...");
