@@ -5,10 +5,10 @@
 
 		static public function getAllLoans($date_limit_begin=NULL, $date_limit_end = NULL){
 			//if null : all
-			$query = " SELECT * FROM LM_emprunt WHERE 1=1  ";
+			$query = " SELECT * FROM LM_emprunt NATURAL JOIN LM_user NATURAL JOIN LM_set WHERE 1=1  ";
 			if($date_limit_begin != NULL) {
 				try{
-					$date_begin = new DateTime($date_limit_begin, new DateTimeZone('Paris/Europe'));
+					$date_begin = new DateTime($date_limit_begin, new DateTimeZone('Europe/Paris'));
 					$date_begin_timestamp = $date_begin_timestamp->getTimeStamp();
 					$query .=" AND date_debut >= $date_begin_timestamp ";
 				}
@@ -17,7 +17,7 @@
 
 			if($date_limit_end != NULL) {
 				try{
-					$date_limit_end = new DateTime($date_limit_end, new DateTimeZone('Paris/Europe'));
+					$date_limit_end = new DateTime($date_limit_end, new DateTimeZone('Europe/Paris'));
 					$date_limit_end_timestamp = $date_begin_time_stamp->getTimeStamp();
 					$query .=" AND date_fin_prevue <= $date_limit_end_timestamp ";
 				}
@@ -37,20 +37,26 @@
 	 		// $res_init = getAllLoans($date_limit_begin,$date_limit_end);
 	 		// $res_array = array(); 
 
+			// $i = 0;
 	 		// foreach ($res_init as $value) {
-	 			// $array_temp = array();
-	 			// $array_temp['title']
-	 			// $array_temp['start']
-	 			// $array_temp['end']
-	 			// $array_temp['title']
+				
+				// $res_array[$i] = array(
+					// 'title' => "".echo $value['nom']."", 
+					// 'start' => "".echo $value['date_debut']."",
+					// 'end' => "".echo $value['date_fin_prevue']."",
+					// 'url' => "www.google.com",
+					// 'backgroundColor' => "#d92405"
+				// );
+				// $i++;
 	 		// }
-		$array_temp = array(
+		 $res_array = array(
 	
 			array(
 				'id' => 111,
-				'title' => "Event45",
+				'title' => "Event 45",
 				'start' => "2014-05-10",
-				'url' => "http://yahoo.com/"
+				'url' => "http://yahoo.com/",
+				'color' => "#d92405"
 			),
 			
 			array(
@@ -58,12 +64,13 @@
 				'title' => "Event2",
 				'start' => "2014-05-20",
 				'end' => "2014-05-22",
-				'url' => "http://yahoo.com/"
+				'url' => "http://yahoo.com/",
+				'info' => "set n° 145875565" 
 			)
 		
 		);
 			
-			return $array_temp;
+			return $res_array;
 	 	}
 
 
@@ -76,6 +83,18 @@
 
 			$stmt = myPDO::getSingletonPDO()->prepare($query);
 			$stmt->execute(array(':id_set'=>$id_set));
+			$res=$stmt->fetchAll(PDO::FETCH_OBJ);
+			$stmt->closeCursor();
+			return $res;	
+		}
+
+		static public function getLoansByUser($id_user){
+			$query= " 	SELECT * FROM LM_emprunt,LM_etat 
+						WHERE LM_emprunt.id_user = :id_user AND
+						LM_etat.idEtat = LM_emprunt.idEtat";
+
+			$stmt = myPDO::getSingletonPDO()->prepare($query);
+			$stmt->execute(array(':id_user'=>$id_user));
 			$res=$stmt->fetchAll(PDO::FETCH_OBJ);
 			$stmt->closeCursor();
 			return $res;	

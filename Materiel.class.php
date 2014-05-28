@@ -44,11 +44,3 @@ class Materiel
 		return $req->execute();
 	}
 }
-
-
-
-Materiel::updateMateriel(3, 'test3', 'test3', 'test3', 1, 1, 1);
-
-$matos= Materiel::getInstance(3);
-
-var_dump($matos);

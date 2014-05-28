@@ -21,10 +21,29 @@
 				center: 'title',
 				right: 'month,agendaWeek,agendaDay'
 			},
-			editable: true,
 			year: y,
-			month: m, // August
-			events: "json.php",
+			month: m,
+			events: {
+				url: 'json.php',
+				data: function() { // a function that returns an object
+					// dayRender: function (date, cell) { 
+						// cell.css("background-color", "red"); 	
+					// }
+					
+					return 1;
+				}
+			}
+			eventBorderColor: 'black', 
+			eventMouseover: function(event, jsEvent, view) { 
+				$(jsEvent.target).attr('title', event.info); 
+				$(this).css('border-color', 'red'); 
+			},
+			eventMouseout: function(event) { 
+				$(this).css('border-color', 'black');
+			},
+			dayRender: function (date, cell) { 
+				cell.css("background-color", "red"); 	
+			} 
 		});
 	});
 </script>
