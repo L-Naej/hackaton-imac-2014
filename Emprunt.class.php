@@ -1,5 +1,6 @@
 <?php
 require_once 'autoload.php';
+require_once("enum_etatEmprunt.php");
 
 class Emprunt {
 	public $id_emprunt;	
@@ -19,26 +20,11 @@ class Emprunt {
 		$result = $stmt->fetchColumn();
 	}
 
-	public static function newReservation ($id_user, $id_set, $date_debut, $date_fin){
-
-		try{
-			$date_debut_temp = new DateTime($date_debut, new DateTimeZone('Europe/Paris'));
-			var_dump($date_debut_temp);
-		}
-		catch(Exception $e){}
-
-		try{
-			$date_fin_temp = new DateTime($date_fin, new DateTimeZone('Europe/Paris'));
-		}
-		catch(Exception $e){}
+	public static function change_etat_loan($id_loan,$nom_etat){
+		$sql = "UPDATE LM_emprunt SET idEtat=(SELECT idEtat FROM LM_etat WHERE nomEtat='$nom_etat') WHERE  id_emprunt=$id_loan";
 		
-		$stmt = myPDO::getSingletonPDO()->prepare("INSERT INTO LM_emprunt (date_debut, date_fin_prevue, id_user, id_set, idEtat) VALUES(:date_debut, :date_fin, :id_user, :id_set, 4)");
-
-		return $stmt->execute(array(':date_debut'=>$date_debut_temp->getTimeStamp(), 
-									':date_fin'=>$date_fin_temp->getTimeStamp(),
-									':id_user'=>$id_user,
-									':id_set'=>$id_set));
+		return myPDO::getSingletonPDO()->query($sql);
 	}
 }
 
-Emprunt::newReservation (1, 1, '2014-02-15', '2014-06-25');
+Emprunt::change_etat_loan(13,REFUSED);

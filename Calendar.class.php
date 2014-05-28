@@ -1,5 +1,6 @@
 <?php
 	require_once('autoload.php');
+	require_once("enum_etatEmprunt.php");
 
 	class Calendar{
 
@@ -25,9 +26,10 @@
 			}
 
 			$stmt = myPDO::getSingletonPDO()->query($query);
+			$stmt->setFetchMode(PDO::FETCH_CLASS, 'Emprunt');
 			$res = array();
 
-			$res = $stmt->fetchAll(PDO::FETCH_OBJ);
+			$res = $stmt->fetchAll(PDO::FETCH_CLASS, 'Emprunt');
 
 			$stmt->closeCursor();
 			return $res;	
@@ -82,8 +84,9 @@
 						LM_etat.nomEtat = '$state_on'";
 
 			$stmt = myPDO::getSingletonPDO()->prepare($query);
+			$stmt->setFetchMode(PDO::FETCH_CLASS, 'Emprunt');
 			$stmt->execute(array(':id_set'=>$id_set));
-			$res=$stmt->fetchAll(PDO::FETCH_OBJ);
+			$res=$stmt->fetchAll(PDO::FETCH_CLASS, 'Emprunt');
 			$stmt->closeCursor();
 			return $res;	
 		}
@@ -94,8 +97,9 @@
 						LM_etat.idEtat = LM_emprunt.idEtat";
 
 			$stmt = myPDO::getSingletonPDO()->prepare($query);
+			$stmt->setFetchMode(PDO::FETCH_CLASS, 'Emprunt');
 			$stmt->execute(array(':id_user'=>$id_user));
-			$res=$stmt->fetchAll(PDO::FETCH_OBJ);
+			$res=$stmt->fetchAll(PDO::FETCH_CLASS, 'Emprunt');
 			$stmt->closeCursor();
 			return $res;	
 		}
@@ -111,17 +115,14 @@
 			$state_on = ON;
 
 			$query=" INSERT INTO LM_emprunt (id_set, id_user, date_debut, date_fin_prevue, idEtat)
-					 VALUES ($set->id_set, $id_borrower, $date_debut, $date_end, $id_borrower, (SELECT idEtat FROM LM_etat WHERE nomEtat = '$state_on' LIMIT 1) )";
+					 VALUES ($set->id_set, $id_borrower, FROM_UNIXTIME($date_begin), FROM_UNIXTIME($date_end), (SELECT idEtat FROM LM_etat WHERE nomEtat = '$state_on' LIMIT 1) )";
 
 			$stmt = myPDO::getSingletonPDO()->query($query);
 			$lastId = myPDO::getSingletonPDO()->lastInsertId();
 			$stmt->closeCursor();
-
 			foreach ($array_id_group as $value) {
-				$stmt = myPDO::getSingletonPDO()->query("INSERT INTO LM_grouper (id_emprunt, id_user) VALUES ($lastId, {$value['id_user']}");
+				$stmt = myPDO::getSingletonPDO()->query("INSERT INTO LM_grouper (id_emprunt, id_user) VALUES ($lastId, $value)");
 				$stmt->closeCursor();                                                                                                          
 			}
 		}
 	}
-
-
